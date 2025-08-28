@@ -1,3 +1,4 @@
+import { useI18n } from "@/i18n";
 import { getHeaderTitle } from "@react-navigation/elements";
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import { Appbar, MD3Colors, useTheme } from "react-native-paper";
@@ -10,6 +11,7 @@ const Header = ({
 }: NativeStackHeaderProps) => {
   const title = getHeaderTitle(options, route?.name);
   const theme = useTheme();
+  const { t } = useI18n();
 
   return (
     <Appbar.Header
@@ -22,9 +24,9 @@ const Header = ({
         />
       ) : null}
       <Appbar.Content
-        title={title.includes("/") ? "" : title}
+        title={title.includes("/") ? "" : t(title)}
         color={MD3Colors.primary50}
-        titleStyle={{ textTransform: "capitalize", fontWeight: "bold" }}
+        titleStyle={{ textTransform: "capitalize" }}
       />
       {options.headerRight
         ? options.headerRight({ tintColor: options.headerTintColor })

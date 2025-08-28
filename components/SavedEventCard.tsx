@@ -1,3 +1,4 @@
+import { useI18n } from "@/i18n";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
@@ -10,7 +11,6 @@ import {
   Portal,
   Text,
 } from "react-native-paper";
-import { useI18n } from "@/i18n";
 
 export type SavedEvent = {
   id: string;
@@ -81,7 +81,9 @@ export default function SavedEventCard({
             </Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setConfirmVisible(false)}>{t("dialog.no")}</Button>
+            <Button onPress={() => setConfirmVisible(false)}>
+              {t("dialog.no")}
+            </Button>
             <Button
               onPress={() => {
                 setConfirmVisible(false);
@@ -108,7 +110,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  bold: { fontWeight: "700", width: "80%" },
+  bold: { width: "80%" },
   subtle: { opacity: 0.8, marginTop: 4 },
   trashBtn: { margin: 0 },
 });

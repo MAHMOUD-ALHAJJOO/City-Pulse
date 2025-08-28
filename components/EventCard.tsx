@@ -1,10 +1,18 @@
+import { useI18n } from "@/i18n";
 import { useFavoriteEvents } from "@/store/useFavoriteEvents";
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
-import { Button, Card, IconButton, MD3Colors, Text, Snackbar, Portal } from "react-native-paper";
-import { useI18n } from "@/i18n";
+import {
+  Button,
+  Card,
+  IconButton,
+  MD3Colors,
+  Portal,
+  Snackbar,
+  Text,
+} from "react-native-paper";
 
 export type Event = {
   id: string;
@@ -23,10 +31,7 @@ type EventCardProps = {
   onToggleFavorite?: (id: string) => void;
 };
 
-const EventCard = ({
-  item,
-  onPress,
-}: EventCardProps) => {
+const EventCard = ({ item, onPress }: EventCardProps) => {
   const { isFavorite, toggleFavorite } = useFavoriteEvents();
   const attendeesLabel = useMemo(() => `${item.attendees}`, [item.attendees]);
   const [addedVisible, setAddedVisible] = useState(false);
@@ -40,94 +45,95 @@ const EventCard = ({
 
   return (
     <>
-    <Card mode="elevated" style={styles.card} onPress={onPress}>
-      {/* Cover */}
-      <Image source={{ uri: item.image }} style={styles.cover} />
+      <Card mode="elevated" style={styles.card} onPress={onPress}>
+        {/* Cover */}
+        <Image source={{ uri: item.image }} style={styles.cover} />
 
-      {/* Content */}
-      <View style={styles.content}>
-        {/* Title + Heart */}
-        <View style={styles.headerRow}>
-          <Text variant="titleMedium" style={styles.title} numberOfLines={1}>
-            {item.title}
-          </Text>
-          <IconButton
-            icon={isFavorite(item.id) ? "heart" : "heart-outline"}
-            iconColor={isFavorite(item.id) ? MD3Colors.error50 : MD3Colors.neutral50}
-            onPress={handleToggleFavorite}
-            size={20}
-            style={styles.heart}
-          />
-        </View>
+        {/* Content */}
+        <View style={styles.content}>
+          {/* Title + Heart */}
+          <View style={styles.headerRow}>
+            <Text variant="titleMedium" style={styles.title} numberOfLines={1}>
+              {item.title}
+            </Text>
+            <IconButton
+              icon={isFavorite(item.id) ? "heart" : "heart-outline"}
+              iconColor={
+                isFavorite(item.id) ? MD3Colors.error50 : MD3Colors.neutral50
+              }
+              onPress={handleToggleFavorite}
+              size={20}
+              style={styles.heart}
+            />
+          </View>
 
-        {/* Venue */}
-        <View style={styles.row}>
-          <FontAwesome5
-            name="map-marked-alt"
-            size={18}
-            color={MD3Colors.neutral50}
-          />
-          <Text variant="titleSmall" style={styles.meta}>
-            {item.venue || t("card.notDetermined")}
-          </Text>
-        </View>
-
-        {/* Date • Time • Attendees */}
-        <View style={[styles.row, { marginTop: 8, columnGap: 18 }]}>
+          {/* Venue */}
           <View style={styles.row}>
-            <MaterialCommunityIcons
-              name="calendar"
+            <FontAwesome5
+              name="map-marked-alt"
               size={18}
               color={MD3Colors.neutral50}
             />
-            <Text variant="bodyMedium" style={styles.meta}>
-              {item.date}
+            <Text variant="titleSmall" style={styles.meta}>
+              {item.venue || t("card.notDetermined")}
             </Text>
           </View>
-          <View style={styles.row}>
-            <MaterialCommunityIcons
-              name="clock-outline"
-              size={18}
-              color={MD3Colors.neutral50}
-            />
-            <Text variant="bodyMedium" style={styles.meta}>
-              {item.time}
-            </Text>
-          </View>
-          <View style={styles.row}>
-            <MaterialCommunityIcons
-              name="account-group"
-              size={18}
-              color={MD3Colors.neutral50}
-            />
-            <Text variant="bodyMedium" style={styles.meta}>
-              {attendeesLabel}
-            </Text>
-          </View>
-        </View>
 
-        {/* CTA */}
-        <Button
-          mode="contained"
-          onPress={() => router.push(`/event/${item.id}`)}
-          style={styles.cta}
-          contentStyle={{ height: 44 }}
-          labelStyle={{ fontWeight: "700" }}
+          {/* Date • Time • Attendees */}
+          <View style={[styles.row, { marginTop: 8, columnGap: 18 }]}>
+            <View style={styles.row}>
+              <MaterialCommunityIcons
+                name="calendar"
+                size={18}
+                color={MD3Colors.neutral50}
+              />
+              <Text variant="bodyMedium" style={styles.meta}>
+                {item.date}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <MaterialCommunityIcons
+                name="clock-outline"
+                size={18}
+                color={MD3Colors.neutral50}
+              />
+              <Text variant="bodyMedium" style={styles.meta}>
+                {item.time}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <MaterialCommunityIcons
+                name="account-group"
+                size={18}
+                color={MD3Colors.neutral50}
+              />
+              <Text variant="bodyMedium" style={styles.meta}>
+                {attendeesLabel}
+              </Text>
+            </View>
+          </View>
+
+          {/* CTA */}
+          <Button
+            mode="contained"
+            onPress={() => router.push(`/event/${item.id}`)}
+            style={styles.cta}
+            contentStyle={{ height: 44 }}
+          >
+            {t("card.viewDetails")}
+          </Button>
+        </View>
+      </Card>
+
+      <Portal>
+        <Snackbar
+          visible={addedVisible}
+          onDismiss={() => setAddedVisible(false)}
+          duration={1500}
         >
-          {t("card.viewDetails")}
-        </Button>
-      </View>
-    </Card>
-
-    <Portal>
-      <Snackbar
-        visible={addedVisible}
-        onDismiss={() => setAddedVisible(false)}
-        duration={1500}
-      >
-        {t("snackbar.added")}
-      </Snackbar>
-    </Portal>
+          {t("snackbar.added")}
+        </Snackbar>
+      </Portal>
     </>
   );
 };
@@ -153,7 +159,6 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontWeight: "700",
   },
   heart: {
     margin: 0,
