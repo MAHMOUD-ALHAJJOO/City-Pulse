@@ -94,6 +94,7 @@ export default function ProfileScreen() {
             description={langLabel}
             right={() => (
               <Switch
+                disabled={true}
                 value={(language ?? "en") === "ar"}
                 onValueChange={(val) => setLanguage(val ? "ar" : "en")}
                 accessibilityLabel="Toggle language"
@@ -116,8 +117,11 @@ export default function ProfileScreen() {
         <>
           <View style={styles.clearAllContainer}>
             <Text variant="bodySmall" style={{ opacity: 0.7 }}>
-              {favoriteEvents.length} {t('event')}
-              {favoriteEvents.length !== 1 && langLabel === "en" ? "s" : ""} {t('saved')}
+              {favoriteEvents.length} {t("event")}
+              {favoriteEvents.length !== 1 && langLabel === "en"
+                ? "s"
+                : ""}{" "}
+              {t("saved")}
             </Text>
             <Text
               variant="bodySmall"
