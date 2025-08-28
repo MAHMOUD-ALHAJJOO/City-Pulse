@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "city-pulse",
+    "slug": "city-pulse",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/adaptive-icon.png",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.alhajjomahmoud.citypulse",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "monochromeImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#FFFBFF"
+      }
+    },
+    "plugins": [
+      "expo-localization",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/images/splash-icon.png",
+          "resizeMode": "contain",
+          "imageWidth": 200,
+          "backgroundColor": "#FFFBFF",
+          "dark": {
+            "backgroundColor": "#1D1B1E"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "supportsRTL": true,
+      "eas": {
+        "projectId": "c95c7d5a-5537-44a2-a2cd-3ec993ad1a16"
+      }
+    }
+  }
+}
