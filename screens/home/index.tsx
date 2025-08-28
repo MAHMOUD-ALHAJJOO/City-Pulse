@@ -14,6 +14,8 @@ import {
 } from "react-native";
 import { MD3Colors, Searchbar, Text, useTheme } from "react-native-paper";
 import HomeHeader from "./components/HomeHeader";
+import { useRouter } from "expo-router";
+import { useFavoriteEvents } from "@/store/useFavoriteEvents";
 
 const HomeScreen = () => {
   const theme = useTheme();
@@ -21,6 +23,7 @@ const HomeScreen = () => {
   const [city, setCity] = useState("");
   const debouncedKeyword = useDebouncedValue(keyword, 400);
   const debouncedCity = useDebouncedValue(city, 400);
+  const router = useRouter();
 
   const {
     data,
@@ -39,6 +42,7 @@ const HomeScreen = () => {
   });
 
   const events = useMemo(() => selectEventsFromInfinite(data), [data]);
+  const { favoriteEvents } = useFavoriteEvents();
 
   return (
     <View
@@ -76,6 +80,18 @@ const HomeScreen = () => {
         <Text variant="titleMedium" style={styles.sectionTitle}>
           Featured Events
         </Text>
+        {favoriteEvents.length > 0 && (
+          <View style={styles.favoriteCount}>
+            <MaterialCommunityIcons
+              name="heart"
+              size={16}
+              color={MD3Colors.error50}
+            />
+            <Text variant="bodySmall" style={styles.favoriteCountText}>
+              {favoriteEvents.length} saved
+            </Text>
+          </View>
+        )}
       </View>
 
       {status === "pending" && events.length === 0 ? (
@@ -97,9 +113,19 @@ const HomeScreen = () => {
         </Text>
       ) : null}
       {status === "success" && events.length === 0 ? (
-        <Text style={{ opacity: 0.6, marginHorizontal: 16, marginBottom: 8 }}>
-          No results.
-        </Text>
+        <View style={styles.noResultsContainer}>
+          <Text style={{ opacity: 0.6, marginHorizontal: 16, marginBottom: 8 }}>
+            No results found.
+          </Text>
+          {favoriteEvents.length > 0 && (
+            <Text
+              style={[styles.viewFavoritesLink, { color: theme.colors.primary }]}
+              onPress={() => router.push("/profile")}
+            >
+              View your {favoriteEvents.length} saved event{favoriteEvents.length !== 1 ? 's' : ''}
+            </Text>
+          )}
+        </View>
       ) : null}
 
       <FlatList
@@ -140,10 +166,29 @@ const styles = StyleSheet.create({
   sectionHeader: {
     paddingHorizontal: 16,
     paddingVertical: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   sectionTitle: { fontWeight: "700", marginTop: 4 },
   list: { flex: 1 },
   listContent: { paddingHorizontal: 16, paddingBottom: 24 },
+  favoriteCount: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  favoriteCountText: {
+    marginLeft: 4,
+  },
+  noResultsContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  viewFavoritesLink: {
+    marginTop: 8,
+    textDecorationLine: "underline",
+  },
 });
 
 export default HomeScreen;

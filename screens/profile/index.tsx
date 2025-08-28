@@ -1,4 +1,5 @@
 import { useSettings } from "@/store/useSettings";
+import { useFavoriteEvents } from "@/store/useFavoriteEvents";
 import * as React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import {
@@ -9,44 +10,20 @@ import {
   Switch,
   Text,
   useTheme,
+  Dialog,
+  Portal,
+  Button,
 } from "react-native-paper";
 
 import SavedEventCard, { SavedEvent } from "@/components/SavedEventCard";
 
-const mockEvents: SavedEvent[] = [
-  {
-    id: "1",
-    title: "Summer Music Festival",
-    dateLine: "Sat, Jun 15 • 7:00 PM",
-    place: "Central Park",
-    thumbnail:
-      "https://images.unsplash.com/photo-1508970436-a41e3d20662b?q=80&w=400",
-  },
-  {
-    id: "2",
-    title: "Broadway Show",
-    dateLine: "Fri, Jun 21 • 8:00 PM",
-    place: "Grand Theater",
-    thumbnail:
-      "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=400",
-  },
-  {
-    id: "3",
-    title: "Street Performance",
-    dateLine: "Sun, Jun 16 • 2:00 PM",
-    place: "Downtown Plaza",
-    thumbnail:
-      "https://images.unsplash.com/photo-1502139214988-d0ad755818d8?q=80&w=400",
-  },
-];
-
 export default function ProfileScreen() {
   const theme = useTheme();
   const { isDark, toggleTheme } = useSettings();
+  const { favoriteEvents, removeFromFavorites, clearAllFavorites } = useFavoriteEvents();
 
-  const [events, setEvents] = React.useState<SavedEvent[]>(mockEvents);
-  const removeEvent = (id: string) =>
-    setEvents((prev) => prev.filter((e) => e.id !== id));
+  const removeEvent = (id: string) => removeFromFavorites(id);
+  const [clearAllVisible, setClearAllVisible] = React.useState(false);
 
   const langLabel = false ? "العربية" : "English";
   const themeLabel = isDark ? "Dark" : "Light";
@@ -127,11 +104,64 @@ export default function ProfileScreen() {
         Saved Events
       </Text>
 
-      {events.map((ev) => (
-        <SavedEventCard key={ev.id} event={ev} onRemove={removeEvent} />
-      ))}
+      {favoriteEvents.length === 0 ? (
+        <Text style={{ opacity: 0.6, marginHorizontal: 16, marginBottom: 8 }}>
+          No saved events yet. Start adding events to your favorites!
+        </Text>
+      ) : (
+        <>
+          <View style={styles.clearAllContainer}>
+            <Text variant="bodySmall" style={{ opacity: 0.7 }}>
+              {favoriteEvents.length} event{favoriteEvents.length !== 1 ? 's' : ''} saved
+            </Text>
+            <Text 
+              variant="bodySmall" 
+              style={[styles.clearAllButton, { color: theme.colors.error }]}
+              onPress={() => setClearAllVisible(true)}
+            >
+              Clear All
+            </Text>
+          </View>
+          {favoriteEvents.map((event) => (
+            <SavedEventCard 
+              key={event.id} 
+              event={{
+                id: event.id,
+                title: event.title,
+                dateLine: `${event.date} • ${event.time}`,
+                place: event.venue,
+                thumbnail: event.image,
+              }} 
+              onRemove={removeEvent} 
+            />
+          ))}
+        </>
+      )}
 
       <View style={styles.bottomSpacer} />
+
+      {/* Clear all confirmation dialog */}
+      <Portal>
+        <Dialog visible={clearAllVisible} onDismiss={() => setClearAllVisible(false)}>
+          <Dialog.Content style={{ alignItems: 'center' }}>
+            <List.Icon icon="alert" color={theme.colors.error} />
+            <Text style={{ textAlign: 'center', marginTop: 4 }}>
+              Are you sure you want to clear all saved events?
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setClearAllVisible(false)}>No</Button>
+            <Button
+              onPress={() => {
+                setClearAllVisible(false);
+                clearAllFavorites();
+              }}
+            >
+              Yes
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </ScrollView>
   );
 }
@@ -150,4 +180,14 @@ const styles = StyleSheet.create({
   rowTitle: { flexDirection: "row", alignItems: "center", gap: 6 },
   cardContentNoXPad: { paddingHorizontal: 0 },
   bottomSpacer: { height: 24 },
+  clearAllContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginBottom: 8,
+  },
+  clearAllButton: {
+    textDecorationLine: 'underline',
+  },
 });

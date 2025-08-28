@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import {
   ActivityIndicator,
@@ -9,6 +9,8 @@ import {
   MD3Colors,
   Text,
   useTheme,
+  Snackbar,
+  Portal,
 } from "react-native-paper";
 
 import {
@@ -17,16 +19,35 @@ import {
 } from "@/adapters/tmEventDetailsAdapter";
 import { openDirections } from "@/helpers";
 import { useEventDetails } from "@/hooks/useEventDetails";
+import { useFavoriteEvents } from "@/store/useFavoriteEvents";
 
 export default function EventDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
+  const { isFavorite, toggleFavorite } = useFavoriteEvents();
+  const [addedVisible, setAddedVisible] = useState(false);
 
   const { data, isPending, error } = useEventDetails(id);
   const event: EventDetailsModel | null = useMemo(
     () => (data ? adaptTMEventDetails(data) : null),
     [data]
   );
+
+  const handleToggleFavorite = () => {
+    if (event) {
+      const wasFavorite = isFavorite(event.id);
+      toggleFavorite({
+        id: event.id,
+        title: event.title,
+        venue: event?.venue || "",
+        date: event?.date || "",
+        time: event?.time || "",
+        image: event?.image || "",
+        attendees: 0,
+      });
+      if (!wasFavorite) setAddedVisible(true);
+    }
+  };
 
   if (isPending) {
     return (
@@ -51,6 +72,7 @@ export default function EventDetails() {
   }
 
   return (
+    <>
     <ScrollView
       style={{ flex: 1, backgroundColor: theme.colors.background }}
       contentContainerStyle={{ paddingBottom: 50 }}
@@ -62,13 +84,15 @@ export default function EventDetails() {
           <Image source={{ uri: event.image }} style={styles.cover} />
         )}
         <IconButton
-          icon="heart-outline"
-          iconColor={MD3Colors.error50}
+          icon={isFavorite(event.id) ? "heart" : "heart-outline"}
+          iconColor={
+            isFavorite(event.id) ? MD3Colors.error50 : MD3Colors.neutral50
+          }
+          onPress={handleToggleFavorite}
           style={[
             styles.favoriteBtn,
             { backgroundColor: theme.colors.surface },
           ]}
-          onPress={() => console.log("Favorite toggled")}
         />
       </Card>
 
@@ -142,6 +166,17 @@ export default function EventDetails() {
         )}
       </View>
     </ScrollView>
+
+    <Portal>
+      <Snackbar
+        visible={addedVisible}
+        onDismiss={() => setAddedVisible(false)}
+        duration={1500}
+      >
+        Added to favorites
+      </Snackbar>
+    </Portal>
+    </>
   );
 }
 

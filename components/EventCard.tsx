@@ -1,8 +1,9 @@
+import { useFavoriteEvents } from "@/store/useFavoriteEvents";
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
-import { Button, Card, IconButton, MD3Colors, Text } from "react-native-paper";
+import { Button, Card, IconButton, MD3Colors, Text, Snackbar, Portal } from "react-native-paper";
 
 export type Event = {
   id: string;
@@ -24,12 +25,19 @@ type EventCardProps = {
 const EventCard = ({
   item,
   onPress,
-  isFavorite = false,
-  onToggleFavorite,
 }: EventCardProps) => {
+  const { isFavorite, toggleFavorite } = useFavoriteEvents();
   const attendeesLabel = useMemo(() => `${item.attendees}`, [item.attendees]);
+  const [addedVisible, setAddedVisible] = useState(false);
+
+  const handleToggleFavorite = () => {
+    const wasFavorite = isFavorite(item.id);
+    toggleFavorite(item);
+    if (!wasFavorite) setAddedVisible(true);
+  };
 
   return (
+    <>
     <Card mode="elevated" style={styles.card} onPress={onPress}>
       {/* Cover */}
       <Image source={{ uri: item.image }} style={styles.cover} />
@@ -42,9 +50,9 @@ const EventCard = ({
             {item.title}
           </Text>
           <IconButton
-            icon={isFavorite ? "heart" : "heart-outline"}
-            iconColor={isFavorite ? MD3Colors.error50 : MD3Colors.neutral50}
-            onPress={() => onToggleFavorite?.(item.id)}
+            icon={isFavorite(item.id) ? "heart" : "heart-outline"}
+            iconColor={isFavorite(item.id) ? MD3Colors.error50 : MD3Colors.neutral50}
+            onPress={handleToggleFavorite}
             size={20}
             style={styles.heart}
           />
@@ -108,6 +116,17 @@ const EventCard = ({
         </Button>
       </View>
     </Card>
+
+    <Portal>
+      <Snackbar
+        visible={addedVisible}
+        onDismiss={() => setAddedVisible(false)}
+        duration={1500}
+      >
+        Added to favorites
+      </Snackbar>
+    </Portal>
+    </>
   );
 };
 
