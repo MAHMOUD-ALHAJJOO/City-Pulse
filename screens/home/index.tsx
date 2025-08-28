@@ -2,8 +2,11 @@ import { selectEventsFromInfinite } from "@/adapters/tmEventAdapter";
 import EventCard from "@/components/EventCard";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useEventsSearch } from "@/hooks/useEventsSearch";
+import { useI18n } from "@/i18n";
+import { useFavoriteEvents } from "@/store/useFavoriteEvents";
 import { globalStyles } from "@/style/common";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -13,10 +16,7 @@ import {
   View,
 } from "react-native";
 import { MD3Colors, Searchbar, Text, useTheme } from "react-native-paper";
-import { useI18n } from "@/i18n";
 import HomeHeader from "./components/HomeHeader";
-import { useRouter } from "expo-router";
-import { useFavoriteEvents } from "@/store/useFavoriteEvents";
 
 const HomeScreen = () => {
   const theme = useTheme();
@@ -121,7 +121,10 @@ const HomeScreen = () => {
           </Text>
           {favoriteEvents.length > 0 && (
             <Text
-              style={[styles.viewFavoritesLink, { color: theme.colors.primary }]}
+              style={[
+                styles.viewFavoritesLink,
+                { color: theme.colors.primary },
+              ]}
               onPress={() => router.push("/profile")}
             >
               {t("home.viewFavorites", { count: favoriteEvents.length })}
@@ -172,7 +175,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  sectionTitle: { fontWeight: "700", marginTop: 4 },
+  sectionTitle: { marginTop: 4 },
   list: { flex: 1 },
   listContent: { paddingHorizontal: 16, paddingBottom: 24 },
   favoriteCount: {

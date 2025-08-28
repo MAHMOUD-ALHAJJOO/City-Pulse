@@ -12,13 +12,7 @@ const HomeHeader = () => {
       <Appbar.Content
         title={
           <View>
-            <Text
-              variant="headlineSmall"
-              style={{
-                opacity: 0.9,
-                fontWeight: "700",
-              }}
-            >
+            <Text variant="headlineMedium" style={{ opacity: 0.9 }}>
               {t("app.title")}
             </Text>
             <Text variant="bodySmall" style={{ opacity: 0.7, marginTop: 1 }}>

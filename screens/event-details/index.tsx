@@ -1,3 +1,4 @@
+import { useI18n } from "@/i18n";
 import { useLocalSearchParams } from "expo-router";
 import { useMemo, useState } from "react";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
@@ -7,12 +8,11 @@ import {
   Card,
   IconButton,
   MD3Colors,
+  Portal,
+  Snackbar,
   Text,
   useTheme,
-  Snackbar,
-  Portal,
 } from "react-native-paper";
-import { useI18n } from "@/i18n";
 
 import {
   adaptTMEventDetails,
@@ -75,106 +75,102 @@ export default function EventDetails() {
 
   return (
     <>
-    <ScrollView
-      style={{ flex: 1, backgroundColor: theme.colors.background }}
-      contentContainerStyle={{ paddingBottom: 50 }}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Cover */}
-      <Card style={styles.card}>
-        {!!event.image && (
-          <Image source={{ uri: event.image }} style={styles.cover} />
-        )}
-        <IconButton
-          icon={isFavorite(event.id) ? "heart" : "heart-outline"}
-          iconColor={
-            isFavorite(event.id) ? MD3Colors.error50 : MD3Colors.neutral50
-          }
-          onPress={handleToggleFavorite}
-          style={[
-            styles.favoriteBtn,
-            { backgroundColor: theme.colors.surface },
-          ]}
-        />
-      </Card>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: theme.colors.background }}
+        contentContainerStyle={{ paddingBottom: 50 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Cover */}
+        <Card style={styles.card}>
+          {!!event.image && (
+            <Image source={{ uri: event.image }} style={styles.cover} />
+          )}
+          <IconButton
+            icon={isFavorite(event.id) ? "heart" : "heart-outline"}
+            iconColor={
+              isFavorite(event.id) ? MD3Colors.error50 : MD3Colors.neutral50
+            }
+            onPress={handleToggleFavorite}
+            style={[
+              styles.favoriteBtn,
+              { backgroundColor: theme.colors.surface },
+            ]}
+          />
+        </Card>
 
-      {/* Title + Info */}
-      <View style={{ paddingHorizontal: 8 }}>
-        <View style={{ padding: 15 }}>
-          <Text variant="headlineSmall" style={{ fontWeight: "bold" }}>
-            {event.title}
-          </Text>
+        {/* Title + Info */}
+        <View style={{ paddingHorizontal: 8 }}>
+          <View style={{ padding: 15 }}>
+            <Text variant="headlineSmall">{event.title}</Text>
 
-          <View style={styles.metaRow}>
-            <Text>
-              📍 {event.venue}
-              {event.city ? `, ${event.city}` : ` ${t("card.notDetermined")}`}
-            </Text>
-          </View>
-
-          <View style={styles.metaRow}>
-            <Text>📅 {event.date || "-"}</Text>
-            <Text style={{ marginStart: 15 }}>⏰ {event.time || "-"}</Text>
-          </View>
-        </View>
-
-        {/* About Section */}
-        {event.about || event.description ? (
-          <Card elevation={2} style={styles.section}>
-            <Text
-              variant="titleMedium"
-              style={{ fontWeight: "bold", marginBottom: 8 }}
-            >
-              {t("details.about")}
-            </Text>
-            <Text style={{ opacity: 0.8 }}>{event.about}</Text>
-            {event.organizer ? (
-              <Text style={{ marginTop: 6 }}>
-                {t("details.organizedBy")}{" "}
-                <Text style={{ fontWeight: "bold" }}>{event.organizer}</Text>
+            <View style={styles.metaRow}>
+              <Text>
+                📍 {event.venue}
+                {event.city ? `, ${event.city}` : ` ${t("card.notDetermined")}`}
               </Text>
-            ) : null}
-          </Card>
-        ) : null}
-
-        {/* Location Section */}
-        {event.lat && event.lng && (
-          <Card style={styles.section}>
-            <View style={styles.locationHeader}>
-              <Text variant="titleMedium" style={{ fontWeight: "bold" }}> {t("details.location")}
-              </Text>
-              <Button
-                compact
-                onPress={() => {
-                  if (event.lat && event.lng) {
-                    openDirections(
-                      event.lat,
-                      event.lng,
-                      event.venue || event.title
-                    );
-                  }
-                }}
-                icon="map-marker"
-              > {t("details.directions")}
-              </Button>
             </View>
-            <Image
-              source={require("../../assets/images/compass.jpeg")}
-              style={styles.locationImg}
-            />
-          </Card>
-        )}
-      </View>
-    </ScrollView>
 
-    <Portal>
-      <Snackbar
-        visible={addedVisible}
-        onDismiss={() => setAddedVisible(false)}
-        duration={1500}
-      > {t("snackbar.added")}
-      </Snackbar>
-    </Portal>
+            <View style={styles.metaRow}>
+              <Text>📅 {event.date || "-"}</Text>
+              <Text style={{ marginStart: 15 }}>⏰ {event.time || "-"}</Text>
+            </View>
+          </View>
+
+          {/* About Section */}
+          {event.about || event.description ? (
+            <Card elevation={2} style={styles.section}>
+              <Text variant="titleMedium" style={{ marginBottom: 8 }}>
+                {t("details.about")}
+              </Text>
+              <Text style={{ opacity: 0.8 }}>{event.about}</Text>
+              {event.organizer ? (
+                <Text style={{ marginTop: 6 }}>
+                  {t("details.organizedBy")} <Text>{event.organizer}</Text>
+                </Text>
+              ) : null}
+            </Card>
+          ) : null}
+
+          {/* Location Section */}
+          {event.lat && event.lng && (
+            <Card style={styles.section}>
+              <View style={styles.locationHeader}>
+                <Text variant="titleMedium"> {t("details.location")}</Text>
+                <Button
+                  compact
+                  onPress={() => {
+                    if (event.lat && event.lng) {
+                      openDirections(
+                        event.lat,
+                        event.lng,
+                        event.venue || event.title
+                      );
+                    }
+                  }}
+                  icon="map-marker"
+                >
+                  {" "}
+                  {t("details.directions")}
+                </Button>
+              </View>
+              <Image
+                source={require("../../assets/images/compass.jpeg")}
+                style={styles.locationImg}
+              />
+            </Card>
+          )}
+        </View>
+      </ScrollView>
+
+      <Portal>
+        <Snackbar
+          visible={addedVisible}
+          onDismiss={() => setAddedVisible(false)}
+          duration={1500}
+        >
+          {t("snackbar.added")}
+        </Snackbar>
+      </Portal>
     </>
   );
 }
@@ -202,11 +198,3 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
 });
-
-
-
-
-
-
-
-

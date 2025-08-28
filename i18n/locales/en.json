@@ -13,6 +13,7 @@
   "details.directions": "Directions",
   "details.about": "About this event",
   "details.organizedBy": "Organized by",
+  "profile": "Profile",
   "profile.saved": "Saved Events",
   "profile.clearAll": "Clear All",
   "profile.noneSaved": "No saved events yet. Start adding events to your favorites!",
@@ -28,4 +29,3 @@
   "dialog.no": "No",
   "snackbar.added": "Added to favorites"
 }
-

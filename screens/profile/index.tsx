@@ -48,9 +48,7 @@ export default function ProfileScreen() {
             }}
           />
           <View style={styles.profileInfo}>
-            <Text variant="titleMedium" style={styles.bold}>
-              Alex Johnson
-            </Text>
+            <Text variant="titleMedium">Alex Johnson</Text>
             <View style={styles.inline}>
               <List.Icon icon="email-outline" style={styles.inlineIcon} />
               <Text variant="bodyMedium" style={styles.subtle}>
@@ -105,7 +103,7 @@ export default function ProfileScreen() {
       </Card>
 
       {/* Saved Events */}
-      <Text variant="titleMedium" style={[styles.bold, styles.sectionTitle]}>
+      <Text variant="titleMedium" style={[styles.sectionTitle]}>
         {t("profile.saved")}
       </Text>
 
@@ -182,7 +180,6 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 12, paddingBottom: 32 },
-  bold: { fontWeight: "700" },
   subtle: { opacity: 0.8 },
   sectionCard: { borderRadius: 16, marginBottom: 12 },
   sectionTitle: { marginVertical: 8, marginHorizontal: 4 },
