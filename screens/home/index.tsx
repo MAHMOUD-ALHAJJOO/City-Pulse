@@ -1,48 +1,44 @@
-import EventCard, { Event } from "@/components/EventCard";
+import { selectEventsFromInfinite } from "@/adapters/tmEventAdapter";
+import EventCard from "@/components/EventCard";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { useEventsSearch } from "@/hooks/useEventsSearch";
 import { globalStyles } from "@/style/common";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { Searchbar, Text, useTheme } from "react-native-paper";
+import { useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  View,
+} from "react-native";
+import { MD3Colors, Searchbar, Text, useTheme } from "react-native-paper";
 import HomeHeader from "./components/HomeHeader";
-
-const mock: Event[] = [
-  {
-    id: "1",
-    title: "Summer Music Festival",
-    venue: "Central Park",
-    date: "Sat, Jun 15",
-    time: "7:00 PM",
-    attendees: 1200,
-    image:
-      "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1974&auto=format&fit=crop",
-  },
-  {
-    id: "2",
-    title: "Broadway Night",
-    venue: "Radio City Music Hall",
-    date: "Sun, Jun 16",
-    time: "8:30 PM",
-    attendees: 980,
-    image:
-      "https://images.unsplash.com/photo-1518544801976-3e159e50e5bb?q=80&w=1974&auto=format&fit=crop",
-  },
-  {
-    id: "3",
-    title: "Indie Rock Live",
-    venue: "Brooklyn Steel",
-    date: "Mon, Jun 17",
-    time: "9:00 PM",
-    attendees: 650,
-    image:
-      "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1974&auto=format&fit=crop",
-  },
-];
 
 const HomeScreen = () => {
   const theme = useTheme();
   const [keyword, setKeyword] = useState("");
   const [city, setCity] = useState("");
+  const debouncedKeyword = useDebouncedValue(keyword, 400);
+  const debouncedCity = useDebouncedValue(city, 400);
+
+  const {
+    data,
+    isFetching,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    isRefetching,
+    status,
+    error,
+  } = useEventsSearch({
+    keyword: debouncedKeyword,
+    city: debouncedCity,
+    size: 10,
+  });
+
+  const events = useMemo(() => selectEventsFromInfinite(data), [data]);
 
   return (
     <View
@@ -52,7 +48,6 @@ const HomeScreen = () => {
       ]}
     >
       <HomeHeader />
-
       <View style={styles.searchBox}>
         <Searchbar
           placeholder="Search events..."
@@ -83,19 +78,52 @@ const HomeScreen = () => {
         </Text>
       </View>
 
+      {status === "pending" && events.length === 0 ? (
+        <ActivityIndicator
+          color={MD3Colors.primary30}
+          size="large"
+          style={{ marginTop: 16 }}
+        />
+      ) : null}
+      {status === "error" ? (
+        <Text
+          style={{
+            color: theme.colors.error,
+            marginHorizontal: 16,
+            marginBottom: 8,
+          }}
+        >
+          {(error as Error)?.message || "Failed to load"}
+        </Text>
+      ) : null}
+      {status === "success" && events.length === 0 ? (
+        <Text style={{ opacity: 0.6, marginHorizontal: 16, marginBottom: 8 }}>
+          No results.
+        </Text>
+      ) : null}
+
       <FlatList
-        data={mock}
+        data={events}
         keyExtractor={(item) => item.id}
         style={styles.list}
         contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => (
-          <EventCard
-            item={item}
-            onPress={() => {
-              /* navigate later */
-            }}
-          />
-        )}
+        renderItem={({ item }) => <EventCard item={item} />}
+        onEndReachedThreshold={0.4}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+        }}
+        refreshControl={
+          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+        }
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator
+              color={MD3Colors.primary30}
+              size="large"
+              style={{ marginVertical: 12 }}
+            />
+          ) : null
+        }
       />
     </View>
   );
@@ -107,13 +135,11 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 6,
     gap: 8,
-    // backgroundColor: "#F5F6FB",
   },
   search: { borderRadius: 14 },
   sectionHeader: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    // backgroundColor: "#F5F6FB",
   },
   sectionTitle: { fontWeight: "700", marginTop: 4 },
   list: { flex: 1 },

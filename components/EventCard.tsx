@@ -58,7 +58,7 @@ const EventCard = ({
             color={MD3Colors.neutral50}
           />
           <Text variant="titleSmall" style={styles.meta}>
-            {item.venue}
+            {item.venue || "Not yet determined"}
           </Text>
         </View>
 

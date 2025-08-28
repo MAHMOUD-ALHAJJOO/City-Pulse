@@ -22,7 +22,7 @@ const Header = ({
         />
       ) : null}
       <Appbar.Content
-        title={title}
+        title={title.includes("/") ? "" : title}
         color={MD3Colors.primary50}
         titleStyle={{ textTransform: "capitalize", fontWeight: "bold" }}
       />

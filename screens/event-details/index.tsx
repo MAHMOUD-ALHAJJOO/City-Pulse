@@ -1,48 +1,66 @@
-import { Stack, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
+import { useMemo } from "react";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import {
+  ActivityIndicator,
   Button,
   Card,
   IconButton,
   MD3Colors,
   Text,
-  useTheme
+  useTheme,
 } from "react-native-paper";
 
+import {
+  adaptTMEventDetails,
+  type EventDetailsModel,
+} from "@/adapters/tmEventDetailsAdapter";
+import { openDirections } from "@/helpers";
+import { useEventDetails } from "@/hooks/useEventDetails";
+
 export default function EventDetails() {
-  const { id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
 
-  const event = {
-    id: "1",
-    title: "Summer Music Festival",
-    category: "Music",
-    venue: "Central Park, New York",
-    date: "Sat, Jun 15",
-    time: "7:00 PM",
-    attendees: 1200,
-    image: "https://images.unsplash.com/photo-1507874457470-272b3c8d8ee2",
-    about:
-      "Join us for an incredible evening of live music featuring top artists from around the world. Experience the magic of summer with food, drinks, and unforgettable performances.",
-    organizer: "City Events Co.",
-    price: "$25-50",
-    locationImg: "https://images.unsplash.com/photo-1504711434969-e33886168f5c",
-  };
+  const { data, isPending, error } = useEventDetails(id);
+  const event: EventDetailsModel | null = useMemo(
+    () => (data ? adaptTMEventDetails(data) : null),
+    [data]
+  );
+
+  if (isPending) {
+    return (
+      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+        <ActivityIndicator
+          color={MD3Colors.primary30}
+          size="large"
+          style={{ marginVertical: 12 }}
+        />
+      </View>
+    );
+  }
+
+  if (error || !event) {
+    return (
+      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+        <Text style={{ color: theme.colors.error, margin: 16 }}>
+          {(error as Error)?.message || "Failed to load"}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView
-      style={{
-        flex: 1,
-        backgroundColor: theme.colors.background,
-      }}
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
       contentContainerStyle={{ paddingBottom: 50 }}
       showsVerticalScrollIndicator={false}
     >
-      <Stack.Screen options={{ title: "" }} />
       {/* Cover */}
-
       <Card style={styles.card}>
-        <Image source={{ uri: event.image }} style={styles.cover} />
+        {!!event.image && (
+          <Image source={{ uri: event.image }} style={styles.cover} />
+        )}
         <IconButton
           icon="heart-outline"
           iconColor={MD3Colors.error50}
@@ -53,6 +71,7 @@ export default function EventDetails() {
           onPress={() => console.log("Favorite toggled")}
         />
       </Card>
+
       {/* Title + Info */}
       <View style={{ paddingHorizontal: 8 }}>
         <View style={{ padding: 15 }}>
@@ -61,52 +80,66 @@ export default function EventDetails() {
           </Text>
 
           <View style={styles.metaRow}>
-            <Text>📍 {event.venue}</Text>
+            <Text>
+              📍 {event.venue}
+              {event.city ? `, ${event.city}` : "Not yet determined"}
+            </Text>
           </View>
 
           <View style={styles.metaRow}>
-            <Text>📅 {event.date}</Text>
-            <Text style={{ marginLeft: 15 }}>⏰ {event.time}</Text>
-            <Text style={{ marginLeft: 15 }}>
-              👥 {event.attendees} attending
-            </Text>
+            <Text>📅 {event.date || "-"}</Text>
+            <Text style={{ marginLeft: 15 }}>⏰ {event.time || "-"}</Text>
           </View>
         </View>
 
         {/* About Section */}
-        <Card elevation={2} style={styles.section}>
-          <Text
-            variant="titleMedium"
-            style={{ fontWeight: "bold", marginBottom: 8 }}
-          >
-            About this event
-          </Text>
-          <Text style={{ opacity: 0.8 }}>{event.about}</Text>
-          <Text style={{ marginTop: 6 }}>
-            Organized by{" "}
-            <Text style={{ fontWeight: "bold" }}>{event.organizer}</Text>
-          </Text>
-        </Card>
+        {event.about || event.description ? (
+          <Card elevation={2} style={styles.section}>
+            <Text
+              variant="titleMedium"
+              style={{ fontWeight: "bold", marginBottom: 8 }}
+            >
+              About this event
+            </Text>
+            <Text style={{ opacity: 0.8 }}>{event.about}</Text>
+            {event.organizer ? (
+              <Text style={{ marginTop: 6 }}>
+                Organized by{" "}
+                <Text style={{ fontWeight: "bold" }}>{event.organizer}</Text>
+              </Text>
+            ) : null}
+          </Card>
+        ) : null}
 
         {/* Location Section */}
-        <Card style={styles.section}>
-          <View style={styles.locationHeader}>
-            <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
-              Location
-            </Text>
-            <Button
-              compact
-              onPress={() => console.log("Open Maps")}
-              icon="map-marker"
-            >
-              Directions
-            </Button>
-          </View>
-          <Image
-            source={{ uri: event.locationImg }}
-            style={styles.locationImg}
-          />
-        </Card>
+        {event.lat && event.lng && (
+          <Card style={styles.section}>
+            <View style={styles.locationHeader}>
+              <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+                Location
+              </Text>
+              <Button
+                compact
+                onPress={() => {
+                  if (event.lat && event.lng) {
+                    openDirections(
+                      event.lat,
+                      event.lng,
+                      event.venue || event.title
+                    );
+                  }
+                }}
+                icon="map-marker"
+              >
+                Directions
+              </Button>
+            </View>
+            <Image
+              source={require("../../assets/images/compass.jpeg")}
+              style={styles.locationImg}
+            />
+          </Card>
+        )}
       </View>
     </ScrollView>
   );
@@ -120,9 +153,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
-  shareBtn: { position: "absolute", top: 10, right: 50 },
   favoriteBtn: { position: "absolute", top: 10, right: 10 },
-  metaRow: { flexDirection: "row", marginBottom: 4 },
+  metaRow: { flexDirection: "row", marginVertical: 6 },
   section: { margin: 10, padding: 15, borderRadius: 12 },
   locationHeader: {
     flexDirection: "row",
