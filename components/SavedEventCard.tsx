@@ -10,6 +10,7 @@ import {
   Portal,
   Text,
 } from "react-native-paper";
+import { useI18n } from "@/i18n";
 
 export type SavedEvent = {
   id: string;
@@ -31,6 +32,7 @@ export default function SavedEventCard({
   onPress,
 }: SavedEventProps) {
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const { t } = useI18n();
 
   return (
     <Card
@@ -75,11 +77,11 @@ export default function SavedEventCard({
           <Dialog.Content style={{ alignItems: "center" }}>
             <IconButton icon="alert" size={36} iconColor={MD3Colors.error50} />
             <Text style={{ textAlign: "center", marginTop: 4 }}>
-              Are you sure you want to remove this saved event?
+              {t("dialog.remove.confirm")}
             </Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setConfirmVisible(false)}>No</Button>
+            <Button onPress={() => setConfirmVisible(false)}>{t("dialog.no")}</Button>
             <Button
               onPress={() => {
                 setConfirmVisible(false);
@@ -87,7 +89,7 @@ export default function SavedEventCard({
               }}
               textColor={MD3Colors.error50}
             >
-              Yes
+              {t("dialog.yes")}
             </Button>
           </Dialog.Actions>
         </Dialog>

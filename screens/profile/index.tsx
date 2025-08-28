@@ -1,32 +1,37 @@
-import { useSettings } from "@/store/useSettings";
+import { useI18n } from "@/i18n";
 import { useFavoriteEvents } from "@/store/useFavoriteEvents";
+import { useSettings } from "@/store/useSettings";
 import * as React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import {
   Avatar,
+  Button,
   Card,
+  Dialog,
   Divider,
   List,
+  MD3Colors,
+  Portal,
   Switch,
   Text,
   useTheme,
-  Dialog,
-  Portal,
-  Button,
 } from "react-native-paper";
 
-import SavedEventCard, { SavedEvent } from "@/components/SavedEventCard";
+import SavedEventCard from "@/components/SavedEventCard";
 
 export default function ProfileScreen() {
   const theme = useTheme();
-  const { isDark, toggleTheme } = useSettings();
-  const { favoriteEvents, removeFromFavorites, clearAllFavorites } = useFavoriteEvents();
+  const { isDark, toggleTheme, language, setLanguage } = useSettings();
+  const { favoriteEvents, removeFromFavorites, clearAllFavorites } =
+    useFavoriteEvents();
 
   const removeEvent = (id: string) => removeFromFavorites(id);
   const [clearAllVisible, setClearAllVisible] = React.useState(false);
 
-  const langLabel = false ? "العربية" : "English";
-  const themeLabel = isDark ? "Dark" : "Light";
+  const { t } = useI18n();
+
+  const langLabel = language === "ar" ? "العربية" : "English";
+  const themeLabel = isDark ? t("profile.dark") : t("profile.light");
 
   return (
     <ScrollView
@@ -64,7 +69,7 @@ export default function ProfileScreen() {
             title={() => (
               <View style={styles.rowTitle}>
                 <List.Icon icon={isDark ? "weather-night" : "weather-sunny"} />
-                <Text variant="bodyLarge">Theme</Text>
+                <Text variant="bodyLarge">{t("profile.theme")}</Text>
               </View>
             )}
             description={themeLabel}
@@ -84,14 +89,14 @@ export default function ProfileScreen() {
             title={() => (
               <View style={styles.rowTitle}>
                 <List.Icon icon="earth" />
-                <Text variant="bodyLarge">Language</Text>
+                <Text variant="bodyLarge">{t("profile.language")}</Text>
               </View>
             )}
             description={langLabel}
             right={() => (
               <Switch
-                value={false}
-                onValueChange={() => {}}
+                value={(language ?? "en") === "ar"}
+                onValueChange={(val) => setLanguage(val ? "ar" : "en")}
                 accessibilityLabel="Toggle language"
               />
             )}
@@ -101,38 +106,39 @@ export default function ProfileScreen() {
 
       {/* Saved Events */}
       <Text variant="titleMedium" style={[styles.bold, styles.sectionTitle]}>
-        Saved Events
+        {t("profile.saved")}
       </Text>
 
       {favoriteEvents.length === 0 ? (
         <Text style={{ opacity: 0.6, marginHorizontal: 16, marginBottom: 8 }}>
-          No saved events yet. Start adding events to your favorites!
+          {t("profile.noneSaved")}
         </Text>
       ) : (
         <>
           <View style={styles.clearAllContainer}>
             <Text variant="bodySmall" style={{ opacity: 0.7 }}>
-              {favoriteEvents.length} event{favoriteEvents.length !== 1 ? 's' : ''} saved
+              {favoriteEvents.length} event
+              {favoriteEvents.length !== 1 ? "s" : ""} saved
             </Text>
-            <Text 
-              variant="bodySmall" 
+            <Text
+              variant="bodySmall"
               style={[styles.clearAllButton, { color: theme.colors.error }]}
               onPress={() => setClearAllVisible(true)}
             >
-              Clear All
+              {t("profile.clearAll")}
             </Text>
           </View>
           {favoriteEvents.map((event) => (
-            <SavedEventCard 
-              key={event.id} 
+            <SavedEventCard
+              key={event.id}
               event={{
                 id: event.id,
                 title: event.title,
                 dateLine: `${event.date} • ${event.time}`,
                 place: event.venue,
                 thumbnail: event.image,
-              }} 
-              onRemove={removeEvent} 
+              }}
+              onRemove={removeEvent}
             />
           ))}
         </>
@@ -142,22 +148,29 @@ export default function ProfileScreen() {
 
       {/* Clear all confirmation dialog */}
       <Portal>
-        <Dialog visible={clearAllVisible} onDismiss={() => setClearAllVisible(false)}>
-          <Dialog.Content style={{ alignItems: 'center' }}>
+        <Dialog
+          visible={clearAllVisible}
+          style={{ borderRadius: 16 }}
+          onDismiss={() => setClearAllVisible(false)}
+        >
+          <Dialog.Content style={{ alignItems: "center" }}>
             <List.Icon icon="alert" color={theme.colors.error} />
-            <Text style={{ textAlign: 'center', marginTop: 4 }}>
-              Are you sure you want to clear all saved events?
+            <Text style={{ textAlign: "center", marginTop: 4 }}>
+              {t("dialog.clear.confirm")}
             </Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setClearAllVisible(false)}>No</Button>
+            <Button onPress={() => setClearAllVisible(false)}>
+              {t("dialog.no")}
+            </Button>
             <Button
               onPress={() => {
                 setClearAllVisible(false);
                 clearAllFavorites();
               }}
+              textColor={MD3Colors.error50}
             >
-              Yes
+              {t("dialog.yes")}
             </Button>
           </Dialog.Actions>
         </Dialog>
@@ -181,13 +194,13 @@ const styles = StyleSheet.create({
   cardContentNoXPad: { paddingHorizontal: 0 },
   bottomSpacer: { height: 24 },
   clearAllContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginHorizontal: 16,
     marginBottom: 8,
   },
   clearAllButton: {
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
 });

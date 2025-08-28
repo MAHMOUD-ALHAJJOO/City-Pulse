@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { MD3Colors, Searchbar, Text, useTheme } from "react-native-paper";
+import { useI18n } from "@/i18n";
 import HomeHeader from "./components/HomeHeader";
 import { useRouter } from "expo-router";
 import { useFavoriteEvents } from "@/store/useFavoriteEvents";
@@ -24,6 +25,7 @@ const HomeScreen = () => {
   const debouncedKeyword = useDebouncedValue(keyword, 400);
   const debouncedCity = useDebouncedValue(city, 400);
   const router = useRouter();
+  const { t } = useI18n();
 
   const {
     data,
@@ -54,7 +56,7 @@ const HomeScreen = () => {
       <HomeHeader />
       <View style={styles.searchBox}>
         <Searchbar
-          placeholder="Search events..."
+          placeholder={t("home.searchEvents")}
           value={keyword}
           onChangeText={setKeyword}
           style={styles.search}
@@ -62,7 +64,7 @@ const HomeScreen = () => {
           iconColor={theme.colors.primary}
         />
         <Searchbar
-          placeholder="Search city..."
+          placeholder={t("home.searchCity")}
           value={city}
           onChangeText={setCity}
           style={styles.search}
@@ -78,7 +80,7 @@ const HomeScreen = () => {
 
       <View style={styles.sectionHeader}>
         <Text variant="titleMedium" style={styles.sectionTitle}>
-          Featured Events
+          {t("home.featured")}
         </Text>
         {favoriteEvents.length > 0 && (
           <View style={styles.favoriteCount}>
@@ -88,7 +90,7 @@ const HomeScreen = () => {
               color={MD3Colors.error50}
             />
             <Text variant="bodySmall" style={styles.favoriteCountText}>
-              {favoriteEvents.length} saved
+              {t("home.savedCount", { count: favoriteEvents.length })}
             </Text>
           </View>
         )}
@@ -115,14 +117,14 @@ const HomeScreen = () => {
       {status === "success" && events.length === 0 ? (
         <View style={styles.noResultsContainer}>
           <Text style={{ opacity: 0.6, marginHorizontal: 16, marginBottom: 8 }}>
-            No results found.
+            {t("home.noResults")}
           </Text>
           {favoriteEvents.length > 0 && (
             <Text
               style={[styles.viewFavoritesLink, { color: theme.colors.primary }]}
               onPress={() => router.push("/profile")}
             >
-              View your {favoriteEvents.length} saved event{favoriteEvents.length !== 1 ? 's' : ''}
+              {t("home.viewFavorites", { count: favoriteEvents.length })}
             </Text>
           )}
         </View>
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   favoriteCountText: {
-    marginLeft: 4,
+    marginStart: 4,
   },
   noResultsContainer: {
     paddingHorizontal: 16,

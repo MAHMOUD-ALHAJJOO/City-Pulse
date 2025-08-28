@@ -12,6 +12,7 @@ import {
   Snackbar,
   Portal,
 } from "react-native-paper";
+import { useI18n } from "@/i18n";
 
 import {
   adaptTMEventDetails,
@@ -26,6 +27,7 @@ export default function EventDetails() {
   const theme = useTheme();
   const { isFavorite, toggleFavorite } = useFavoriteEvents();
   const [addedVisible, setAddedVisible] = useState(false);
+  const { t } = useI18n();
 
   const { data, isPending, error } = useEventDetails(id);
   const event: EventDetailsModel | null = useMemo(
@@ -106,13 +108,13 @@ export default function EventDetails() {
           <View style={styles.metaRow}>
             <Text>
               📍 {event.venue}
-              {event.city ? `, ${event.city}` : "Not yet determined"}
+              {event.city ? `, ${event.city}` : ` ${t("card.notDetermined")}`}
             </Text>
           </View>
 
           <View style={styles.metaRow}>
             <Text>📅 {event.date || "-"}</Text>
-            <Text style={{ marginLeft: 15 }}>⏰ {event.time || "-"}</Text>
+            <Text style={{ marginStart: 15 }}>⏰ {event.time || "-"}</Text>
           </View>
         </View>
 
@@ -123,12 +125,12 @@ export default function EventDetails() {
               variant="titleMedium"
               style={{ fontWeight: "bold", marginBottom: 8 }}
             >
-              About this event
+              {t("details.about")}
             </Text>
             <Text style={{ opacity: 0.8 }}>{event.about}</Text>
             {event.organizer ? (
               <Text style={{ marginTop: 6 }}>
-                Organized by{" "}
+                {t("details.organizedBy")}{" "}
                 <Text style={{ fontWeight: "bold" }}>{event.organizer}</Text>
               </Text>
             ) : null}
@@ -139,8 +141,7 @@ export default function EventDetails() {
         {event.lat && event.lng && (
           <Card style={styles.section}>
             <View style={styles.locationHeader}>
-              <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
-                Location
+              <Text variant="titleMedium" style={{ fontWeight: "bold" }}> {t("details.location")}
               </Text>
               <Button
                 compact
@@ -154,8 +155,7 @@ export default function EventDetails() {
                   }
                 }}
                 icon="map-marker"
-              >
-                Directions
+              > {t("details.directions")}
               </Button>
             </View>
             <Image
@@ -172,8 +172,7 @@ export default function EventDetails() {
         visible={addedVisible}
         onDismiss={() => setAddedVisible(false)}
         duration={1500}
-      >
-        Added to favorites
+      > {t("snackbar.added")}
       </Snackbar>
     </Portal>
     </>
@@ -203,3 +202,11 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
 });
+
+
+
+
+
+
+
+

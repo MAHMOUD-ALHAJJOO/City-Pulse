@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { useMemo, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { Button, Card, IconButton, MD3Colors, Text, Snackbar, Portal } from "react-native-paper";
+import { useI18n } from "@/i18n";
 
 export type Event = {
   id: string;
@@ -29,6 +30,7 @@ const EventCard = ({
   const { isFavorite, toggleFavorite } = useFavoriteEvents();
   const attendeesLabel = useMemo(() => `${item.attendees}`, [item.attendees]);
   const [addedVisible, setAddedVisible] = useState(false);
+  const { t } = useI18n();
 
   const handleToggleFavorite = () => {
     const wasFavorite = isFavorite(item.id);
@@ -66,7 +68,7 @@ const EventCard = ({
             color={MD3Colors.neutral50}
           />
           <Text variant="titleSmall" style={styles.meta}>
-            {item.venue || "Not yet determined"}
+            {item.venue || t("card.notDetermined")}
           </Text>
         </View>
 
@@ -112,7 +114,7 @@ const EventCard = ({
           contentStyle={{ height: 44 }}
           labelStyle={{ fontWeight: "700" }}
         >
-          View Details
+          {t("card.viewDetails")}
         </Button>
       </View>
     </Card>
@@ -123,7 +125,7 @@ const EventCard = ({
         onDismiss={() => setAddedVisible(false)}
         duration={1500}
       >
-        Added to favorites
+        {t("snackbar.added")}
       </Snackbar>
     </Portal>
     </>
@@ -162,7 +164,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   meta: {
-    marginLeft: 6,
+    marginStart: 6,
     opacity: 0.9,
   },
   cta: {

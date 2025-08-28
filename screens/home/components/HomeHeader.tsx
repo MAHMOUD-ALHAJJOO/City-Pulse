@@ -1,9 +1,11 @@
+import { useI18n } from "@/i18n";
 import { router } from "expo-router";
 import { View } from "react-native";
 import { Appbar, MD3Colors, Text, useTheme } from "react-native-paper";
 
 const HomeHeader = () => {
   const theme = useTheme();
+  const { t } = useI18n();
 
   return (
     <Appbar.Header style={{ backgroundColor: theme.colors.background }}>
@@ -17,10 +19,10 @@ const HomeHeader = () => {
                 fontWeight: "700",
               }}
             >
-              City Pulse
+              {t("app.title")}
             </Text>
             <Text variant="bodySmall" style={{ opacity: 0.7, marginTop: 1 }}>
-              Discover local events
+              {t("app.subtitle")}
             </Text>
           </View>
         }
