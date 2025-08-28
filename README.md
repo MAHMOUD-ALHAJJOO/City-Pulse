@@ -1,50 +1,124 @@
-# Welcome to your Expo app 👋
+## Live Links
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+### Mobile Builds
+- [Download Android APK](https://expo.dev/accounts/alhajjomahmoud/projects/city-pulse/builds/34446d09-6539-4309-84e2-119ae48748fe)  
 
-## Get started
+### Video Demos
+- [iOS Demo](https://drive.google.com/file/d/15yKRDMPEks8AE7X74ajq-bplx464wXDk/view?usp=sharing)
 
-1. Install dependencies
+- [Android Demo](https://drive.google.com/file/d/15xoXA4dBvoqDCgxFNCWKX4YKO_dlZhxf/view?usp=sharing)  
 
-   ```bash
-   npm install
-   ```
+## Important Note ⚠️
 
-2. Start the app
+Arabic language and RTL support are **only available in the Android APK build**.  
+To test this feature, please download and install the APK from the following link:  
+[Download Android APK](https://expo.dev/accounts/alhajjomahmoud/projects/city-pulse/builds/34446d09-6539-4309-84e2-119ae48748fe)
 
-   ```bash
-   npx expo start
-   ```
+If you run the app in **development mode** (using Expo Go), Arabic and RTL **will not be supported**.  
+This is because **Expo Go does not support custom fonts or RTL**, so the feature will appear disabled in that environment.
 
-In the output, you'll find options to open the app in a
+# City Pulse
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Cross-platform mobile app: Discover local events with search, favorites, dark mode, and bilingual support (English/Arabic + RTL). Built with Expo Router, React Native Paper, React Query, and Zustand.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Tech Stack
+- Expo 53 + Expo Router 5
+- React Native 0.79, React 19
+- React Native Paper (Material 3)
+- @tanstack/react-query
+- Zustand (+ AsyncStorage)
+- Axios
 
-## Get a fresh project
+## Folder Structure (concise)
+```
+app/                     # Expo Router routes (thin wrappers)
+  _layout.tsx
+  index.tsx              # Home
+  profile.tsx            # Profile
+  event/[id].tsx         # Event details
 
-When you're ready, run:
+screens/                 # Feature UI + local logic
+  home/
+    components/          # EventCard, HomeHeader
+    adapters/            # tmEventAdapter.ts
+    hooks/               # useEventsSearch.ts
+    index.tsx            # HomeScreen
+  event-details/
+    adapters/            # tmEventDetailsAdapter.ts
+    hooks/               # useEventDetails.ts
+    index.tsx            # EventDetailsScreen
+  profile/
+    components/          # SavedEventCard
+    index.tsx            # ProfileScreen
 
-```bash
-npm run reset-project
+services/api/            # Provider-specific API
+  client.ts              # Axios base (uses EXPO_PUBLIC_TM_KEY or a built-in default)
+  ticketmasterApi.ts     # Ticketmaster Discovery API helpers
+
+shared/                  # Reusable building blocks
+  hooks/                 # useAppTheme, useRTL, useDebouncedValue
+  i18n/                  # useI18n + locales (en/ar)
+  store/                 # useFavoriteEvents, useSettings
+  ui/                    # Header
+  utils/                 # queryClient, helpers
+
+assets/
+  fonts/                 # Montserrat*, DINNextLTArabic*
+  images/                # icons & splash
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Setup
+1) Prerequisites
+- Node.js 18+ and npm
+- Xcode (macOS) and/or Android Studio if using simulators
+- Ticketmaster API key (optional, see below)
 
-## Learn more
+2) Install dependencies
+```
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+3) Environment (optional)
+- The client includes a default Ticketmaster API key, so you can run without any env setup.
+- To use your own key, create a `.env` file at the project root:
+```
+EXPO_PUBLIC_TM_KEY=YOUR_TICKETMASTER_KEY
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+4) Start the app (Metro bundler)
+```
+npx expo start
+```
+- Press `a` for Android, `i` for iOS, or `w` for web.
+- Or scan the QR with Expo Go / a dev client on device.
 
-## Join the community
+5) Optional: Run a development build (dev client)
+```
+expo run:android   # or: expo run:ios
+```
+Then use `npx expo start` to connect to the dev client.
 
-Join our community of developers creating universal apps.
+6) EAS builds (optional)
+```
+npx eas build -p android --profile development   # APK dev build
+npx eas build -p android --profile preview       # Internal preview
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Run Scripts
+- `npm start` → `expo start`
+- `npm run android` / `npm run ios` / `npm run web`
+- `npm run lint`
+
+## Features
+- Search events by keyword and city (infinite scroll + pull-to-refresh)
+- Event details: cover image, about/organizer, open-in-maps directions
+- Favorites: add/remove and clear-all (persisted in AsyncStorage)
+- Light/Dark theme toggle
+- i18n (EN/AR) with RTL; language toggle reloads UI for layout direction
+- Custom fonts: Montserrat (EN), DINNextLTArabic (AR)
+
+## Assumptions
+- Ticketmaster Discovery API is the single data provider.
+- `services/api/client.ts` falls back to a built-in API key if `EXPO_PUBLIC_TM_KEY` is not set. You can override it via `.env`.
+- Default search window is bounded in the API helper to reduce irrelevant results.
+- Fonts are located under `assets/fonts/Montserrat` and `assets/fonts/DINNextLTArabic` and loaded in `shared/hooks/useAppTheme.ts`.
