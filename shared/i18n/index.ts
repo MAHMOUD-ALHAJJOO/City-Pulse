@@ -1,4 +1,4 @@
-import { useSettings } from "@/store/useSettings";
+import { useSettings } from "@/shared/store/useSettings";
 import * as Localization from "expo-localization";
 import { useMemo } from "react";
 import ar from "./locales/ar.json";

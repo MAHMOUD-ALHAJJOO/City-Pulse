@@ -1,4 +1,4 @@
-import { useI18n } from "@/i18n";
+import { useI18n } from "@/shared/i18n";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";

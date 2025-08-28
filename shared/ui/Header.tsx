@@ -1,4 +1,4 @@
-import { useI18n } from "@/i18n";
+import { useI18n } from "@/shared/i18n";
 import { getHeaderTitle } from "@react-navigation/elements";
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import { Appbar, MD3Colors, useTheme } from "react-native-paper";

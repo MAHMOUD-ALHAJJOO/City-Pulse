@@ -1,5 +1,5 @@
-import { useI18n } from "@/i18n";
-import { useFavoriteEvents } from "@/store/useFavoriteEvents";
+import { useI18n } from "@/shared/i18n";
+import { useFavoriteEvents } from "@/shared/store/useFavoriteEvents";
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useMemo, useState } from "react";

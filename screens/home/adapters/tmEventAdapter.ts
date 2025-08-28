@@ -1,6 +1,6 @@
-import type { Event } from "@/components/EventCard";
-import { pickImage } from "@/helpers";
-import type { TMEvent, TMSearchResponse } from "@/services/api/tm";
+import type { Event } from "@/screens/home/components/EventCard";
+import type { TMEvent, TMSearchResponse } from "@/services/api/ticketmasterApi";
+import { pickImage } from "@/shared/utils/helpers";
 import type { InfiniteData } from "@tanstack/react-query";
 
 export function adaptTMEvent(e: TMEvent): Event {

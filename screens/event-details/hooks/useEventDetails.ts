@@ -1,4 +1,4 @@
-import { fetchEventById, TMEvent } from "@/services/api/tm";
+import { fetchEventById, TMEvent } from "@/services/api/ticketmasterApi";
 import { useQuery } from "@tanstack/react-query";
 
 export function useEventDetails(id?: string) {

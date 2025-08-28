@@ -1,4 +1,4 @@
-import { searchEventsPage, TMSearchResponse } from "@/services/api/tm";
+import { searchEventsPage, TMSearchResponse } from "@/services/api/ticketmasterApi";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 type Params = { keyword?: string; city?: string; size?: number };

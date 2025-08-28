@@ -1,4 +1,4 @@
-import { useI18n } from "@/i18n";
+import { useI18n } from "@/shared/i18n";
 import { useLocalSearchParams } from "expo-router";
 import { useMemo, useState } from "react";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
@@ -17,10 +17,10 @@ import {
 import {
   adaptTMEventDetails,
   type EventDetailsModel,
-} from "@/adapters/tmEventDetailsAdapter";
-import { openDirections } from "@/helpers";
-import { useEventDetails } from "@/hooks/useEventDetails";
-import { useFavoriteEvents } from "@/store/useFavoriteEvents";
+} from "@/screens/event-details/adapters/tmEventDetailsAdapter";
+import { useEventDetails } from "@/screens/event-details/hooks/useEventDetails";
+import { useFavoriteEvents } from "@/shared/store/useFavoriteEvents";
+import { openDirections } from "@/shared/utils/helpers";
 
 export default function EventDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();

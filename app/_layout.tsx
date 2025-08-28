@@ -1,8 +1,8 @@
-import Header from "@/components/Header";
-import { useAppTheme } from "@/hooks/useAppTheme";
-import useRTL from "@/hooks/useRTL";
-import queryClient from "@/lib/queryClient";
-import { useSettings } from "@/store/useSettings";
+import { useAppTheme } from "@/shared/hooks/useAppTheme";
+import useRTL from "@/shared/hooks/useRTL";
+import { useSettings } from "@/shared/store/useSettings";
+import Header from "@/shared/ui/Header";
+import queryClient from "@/shared/utils/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";

@@ -1,6 +1,6 @@
-import { useI18n } from "@/i18n";
-import { useFavoriteEvents } from "@/store/useFavoriteEvents";
-import { useSettings } from "@/store/useSettings";
+import { useI18n } from "@/shared/i18n";
+import { useFavoriteEvents } from "@/shared/store/useFavoriteEvents";
+import { useSettings } from "@/shared/store/useSettings";
 import * as React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import {
@@ -17,7 +17,7 @@ import {
   useTheme,
 } from "react-native-paper";
 
-import SavedEventCard from "@/components/SavedEventCard";
+import SavedEventCard from "@/screens/profile/components/SavedEventCard";
 
 export default function ProfileScreen() {
   const theme = useTheme();
@@ -48,11 +48,11 @@ export default function ProfileScreen() {
             }}
           />
           <View style={styles.profileInfo}>
-            <Text variant="titleMedium">Alex Johnson</Text>
+            <Text variant="titleMedium">{t("profile.name")}</Text>
             <View style={styles.inline}>
               <List.Icon icon="email-outline" style={styles.inlineIcon} />
               <Text variant="bodyMedium" style={styles.subtle}>
-                alex.johnson@example.com
+                Yasmine.Al-Agha@example.com
               </Text>
             </View>
           </View>

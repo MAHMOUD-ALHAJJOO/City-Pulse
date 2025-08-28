@@ -1,7 +1,7 @@
+import type { Event } from "@/screens/home/components/EventCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import type { Event } from "@/components/EventCard";
 
 type FavoriteEventsState = {
   favoriteEvents: Event[];

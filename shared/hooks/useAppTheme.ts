@@ -15,18 +15,18 @@ export function useAppTheme(isDark: boolean, language: "en" | "ar" | null) {
   // Load all font files
   const [fontsLoaded] = Font.useFonts({
     // English: Montserrat
-    "Montserrat-Thin": require("../assets/fonts/Montserrat-Thin.ttf"),
-    "Montserrat-Light": require("../assets/fonts/Montserrat-Light.ttf"),
-    "Montserrat-Regular": require("../assets/fonts/Montserrat-Regular.ttf"),
-    "Montserrat-Medium": require("../assets/fonts/Montserrat-Medium.ttf"),
-    "Montserrat-SemiBold": require("../assets/fonts/Montserrat-SemiBold.ttf"),
-    "Montserrat-Bold": require("../assets/fonts/Montserrat-Bold.ttf"),
+    "Montserrat-Thin": require("../../assets/fonts/Montserrat/Montserrat-Thin.ttf"),
+    "Montserrat-Light": require("../../assets/fonts/Montserrat/Montserrat-Light.ttf"),
+    "Montserrat-Regular": require("../../assets/fonts/Montserrat/Montserrat-Regular.ttf"),
+    "Montserrat-Medium": require("../../assets/fonts/Montserrat/Montserrat-Medium.ttf"),
+    "Montserrat-SemiBold": require("../../assets/fonts/Montserrat/Montserrat-SemiBold.ttf"),
+    "Montserrat-Bold": require("../../assets/fonts/Montserrat/Montserrat-Bold.ttf"),
     // Arabic: DINNextLTArabic
-    "DINNextLTArabic-UltraLight": require("../assets/fonts/DINNextLTArabic-UltraLight.ttf"),
-    "DINNextLTArabic-Light": require("../assets/fonts/DINNextLTArabic-Light.ttf"),
-    "DINNextLTArabic-Regular": require("../assets/fonts/DINNextLTArabic-Regular.ttf"),
-    "DINNextLTArabic-Medium": require("../assets/fonts/DINNextLTArabic-Medium.ttf"),
-    "DINNextLTArabic-Bold": require("../assets/fonts/DINNextLTArabic-Bold.ttf"),
+    "DINNextLTArabic-UltraLight": require("../../assets/fonts/DINNextLTArabic/DINNextLTArabic-UltraLight.ttf"),
+    "DINNextLTArabic-Light": require("../../assets/fonts/DINNextLTArabic/DINNextLTArabic-Light.ttf"),
+    "DINNextLTArabic-Regular": require("../../assets/fonts/DINNextLTArabic/DINNextLTArabic-Regular.ttf"),
+    "DINNextLTArabic-Medium": require("../../assets/fonts/DINNextLTArabic/DINNextLTArabic-Medium.ttf"),
+    "DINNextLTArabic-Bold": require("../../assets/fonts/DINNextLTArabic/DINNextLTArabic-Bold.ttf"),
   });
 
   // Determine whether to use Arabic fonts based on settings or device

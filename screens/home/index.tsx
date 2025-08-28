@@ -1,10 +1,9 @@
-import { selectEventsFromInfinite } from "@/adapters/tmEventAdapter";
-import EventCard from "@/components/EventCard";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { useEventsSearch } from "@/hooks/useEventsSearch";
-import { useI18n } from "@/i18n";
-import { useFavoriteEvents } from "@/store/useFavoriteEvents";
-import { globalStyles } from "@/style/common";
+import { selectEventsFromInfinite } from "@/screens/home/adapters/tmEventAdapter";
+import EventCard from "@/screens/home/components/EventCard";
+import { useEventsSearch } from "@/screens/home/hooks/useEventsSearch";
+import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useI18n } from "@/shared/i18n";
+import { useFavoriteEvents } from "@/shared/store/useFavoriteEvents";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
@@ -47,12 +46,7 @@ const HomeScreen = () => {
   const { favoriteEvents } = useFavoriteEvents();
 
   return (
-    <View
-      style={[
-        globalStyles.screen,
-        { backgroundColor: theme.colors.background },
-      ]}
-    >
+    <View style={{ backgroundColor: theme.colors.background, flex: 1 }}>
       <HomeHeader />
       <View style={styles.searchBox}>
         <Searchbar

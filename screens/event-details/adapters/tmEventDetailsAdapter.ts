@@ -1,5 +1,5 @@
-import { pickImage } from "@/helpers";
-import type { TMEvent } from "@/services/api/tm";
+import type { TMEvent } from "@/services/api/ticketmasterApi";
+import { pickImage } from "@/shared/utils/helpers";
 
 export type EventDetailsModel = {
   id: string;
