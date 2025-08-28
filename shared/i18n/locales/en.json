@@ -28,5 +28,7 @@
   "dialog.clear.confirm": "Are you sure you want to clear all saved events?",
   "dialog.yes": "Yes",
   "dialog.no": "No",
-  "snackbar.added": "Added to favorites"
+  "snackbar.added": "Added to favorites",
+  "event": "event",
+  "saved": "saved"
 }

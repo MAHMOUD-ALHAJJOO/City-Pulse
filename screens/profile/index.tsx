@@ -30,7 +30,8 @@ export default function ProfileScreen() {
 
   const { t } = useI18n();
 
-  const langLabel = language === "ar" ? "العربية" : "English";
+  const langLabel =
+    (language ?? "en") === "ar" ? t("profile.arabic") : t("profile.english");
   const themeLabel = isDark ? t("profile.dark") : t("profile.light");
 
   return (
@@ -115,13 +116,15 @@ export default function ProfileScreen() {
         <>
           <View style={styles.clearAllContainer}>
             <Text variant="bodySmall" style={{ opacity: 0.7 }}>
-              {favoriteEvents.length} event
-              {favoriteEvents.length !== 1 ? "s" : ""} saved
+              {favoriteEvents.length} {t('event')}
+              {favoriteEvents.length !== 1 && langLabel === "en" ? "s" : ""} {t('saved')}
             </Text>
             <Text
               variant="bodySmall"
               style={[styles.clearAllButton, { color: theme.colors.error }]}
               onPress={() => setClearAllVisible(true)}
+              accessibilityRole="button"
+              accessibilityLabel={t("profile.clearAll")}
             >
               {t("profile.clearAll")}
             </Text>

@@ -28,6 +28,8 @@
   "dialog.clear.confirm": "هل تريد بالتأكيد حذف جميع الفعاليات المحفوظة؟",
   "dialog.yes": "نعم",
   "dialog.no": "لا",
-  "snackbar.added": "تمت الإضافة إلى المفضلة"
+  "snackbar.added": "تمت الإضافة إلى المفضلة",
+  "event": "فعالية",
+  "saved": "محفوظة"
 }
 
